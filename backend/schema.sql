@@ -14,7 +14,7 @@ CREATE TABLE configuration (
 CREATE TABLE room (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     is_open INTEGER NOT NULL,
-    automatik_enable NOT NULL
+    automatik_enable INTEGER NOT NULL
 );
 
 CREATE TABLE window (
