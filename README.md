@@ -20,9 +20,10 @@
     Windows: set FLASK_APP=backend
     Windows: set FLASK_ENV=development
 - Nun kann die Anwendung wie folgt genutzt werden
-    flask <Befehl>
+    flask Befehl
 
 # Mögliche Befehle
-- run: startet das Backend
-- init-db: legt die Datenbank an bzw bereinigt diese
-- sample-db: fügt Beispieldaten in die Datenbank ein
+Befehl | Beschreibung
+run | startet das Backend
+init-db | legt die Datenbank an bzw bereinigt diese
+sample-db | fügt Beispieldaten in die Datenbank ein
