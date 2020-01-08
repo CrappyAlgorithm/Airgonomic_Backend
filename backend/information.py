@@ -1,29 +1,26 @@
 import functools
 import json
-import flask as fl
+from flask import (Blueprint, Response, request)
+from . import response_code as rc
 from backend.db import get_db
 
-bp = fl.Blueprint('information', __name__, url_prefix='/information')
+bp = Blueprint('information', __name__, url_prefix='/information')
 
 @bp.route('/',methods=['GET'])
 def information():
-    if fl.request.method == 'GET':
-        token = fl.request.args.get('token', '')
+    if request.method == 'GET':
+        token = request.args.get('token', '')
         db = get_db()
-        error = None
-        user_id = int(token)
-        if not token:
-            error = 'Auth-Token is required.'
 
+        if not token:
+            return Response('Authentification token is required', status=rc.PRECONDITION_FAILED)
         #need to be changed for token use
-        elif db.execute(
+        user_id = int(token)
+        if db.execute(
             'SELECT id FROM user WHERE id = ?', (user_id,)
         ).fetchone() is None:
-            error = 'Not authorized.'
-
-        if error is None:
-            return generate_view(db, user_id)
-        return error
+            return Response('Not authorized', status=rc.UNAUTHORIZED)
+        return Response(generate_view(db, user_id), status=rc.OK, mimetype='application/json')
 
 def generate_view(db, user_id):
     cursor = db.cursor()
@@ -45,7 +42,7 @@ def generate_view(db, user_id):
         room['humidity'] = cur[4]
         room['is_open'] = cur[5]
         room['windows'] = []
-        #add windows
+
         for cur_w in cursor.execute(
             'SELECT window.id, assignment.alias, window.automatic_enable, window.is_open ' +
             'FROM window join assignment ' +

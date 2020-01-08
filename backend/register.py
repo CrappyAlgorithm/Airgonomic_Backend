@@ -1,30 +1,30 @@
 import functools
-import flask as fl
+from flask import (Blueprint, Response, request)
+from . import response_code as rc
 from backend.db import get_db
 
-bp = fl.Blueprint('register', __name__, url_prefix='/register')
+bp = Blueprint('register', __name__, url_prefix='/register')
 
 @bp.route('/',methods=['POST'])
 def register():
-    if fl.request.method == 'POST':
-        username = fl.request.args.get('username', '')
-        password = fl.request.args.get('password', '')
+    if request.method == 'POST':
+        username = request.args.get('username', '')
+        password = request.args.get('password', '')
         db = get_db()
-        error = None
 
         if not username:
-            error = 'Username is required.'
-        elif not password:
-            error = 'Password is required.'
-        elif db.execute(
+            return Response('Username is required', status=rc.PRECONDITION_FAILED)
+        if not password:
+            return Response('Password is required', status=rc.PRECONDITION_FAILED)
+        if db.execute(
             'SELECT id FROM user WHERE username = ?', (username,)
         ).fetchone() is not None:
-            error = 'User {} is already registered.'.format(username)
+            return Response('User {} is already registered.'.format(username), status=rc.CONFLICT)
 
         if error is None:
             #insert user to db and generate link to all rooms/windows
             add_user(db, username, password)
-            return 'success'
+            return Response('', status=rc.CREATED)
         return error
 
 def add_user(db, username, password):

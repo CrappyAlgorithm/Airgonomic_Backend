@@ -1,36 +1,32 @@
 import functools
 import json
-import flask as fl
+from flask import (Blueprint, Response, request)
+from . import response_code as rc
 from backend.db import get_db
 
-bp = fl.Blueprint('login', __name__, url_prefix='/login')
+bp = Blueprint('login', __name__, url_prefix='/login')
 
 @bp.route('/',methods=['POST'])
 def login():
-    if fl.request.method == 'POST':
-        username = fl.request.args.get('username', '')
-        password = fl.request.args.get('password', '')
+    if request.method == 'POST':
+        username = request.args.get('username', '')
+        password = request.args.get('password', '')
         db = get_db()
-        error = None
 
         if not username:
-            error = 'Username is required.'
-        elif not password:
-            error = 'Password is required.'
+            return Response('Username is required', status=rc.PRECONDITION_FAILED)
+        if not password:
+            return Response('Password is required', status=rc.PRECONDITION_FAILED)
         user = db.execute(
             'SELECT id, password FROM user WHERE username = ?', (username,)
         ).fetchone()
         if user is None:
-            error = 'User {} is not registered.'.format(username)
-        
-        if password != user[1]:
-            print(password)
-            print(user[1])
-            error = "Password doesn't match"
+            return Response('User {} is not registered.'.format(username), status=rc.NOT_FOUND)
 
-        if error is None:
-            #replace generate and set token, to use real auth token
-            ret = {}
-            ret['token'] = user[0]
-            return json.dumps(ret)
-        return error
+        if password != user[1]:
+            return Response('Password is wrong.', status=rc.FORBIDDEN)
+
+        #replace generate and set token, to use real auth token
+        ret = {}
+        ret['token'] = user[0]
+        return Response(json.dumps(ret), status=rc.OK, mimetype='application/json')
