@@ -38,7 +38,9 @@ $ set FLASK_APP=backend
 $ set FLASK_ENV=development
 ```
 - Nun kann die Anwendung wie folgt genutzt werden
-    flask Befehl
+```sh
+$ flask <Befehl>
+```
 
 # Mögliche Befehle
 Befehl | Beschreibung
