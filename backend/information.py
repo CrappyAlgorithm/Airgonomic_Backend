@@ -27,7 +27,7 @@ def generate_view(db, user_id):
     ret = {}
     ret['rooms'] = []
     for cur in cursor.execute(
-        'SELECT room.id, assignment.alias, room.automatic_enable, room.co2, room.humidity, room.is_open ' +
+        'SELECT room.id, assignment.alias, assignment.allowed, room.automatic_enable, room.co2, room.humidity, room.is_open ' +
         'FROM room JOIN assignment ' +
         'ON room.id = assignment.room_id ' +
         'WHERE assignment.user_id = ?',
@@ -37,10 +37,11 @@ def generate_view(db, user_id):
         room = {}
         room['room_id'] = cur[0]
         room['alias'] = cur[1]
-        room['automati_enable'] = cur[2]
-        room['co2'] = cur[3]
-        room['humidity'] = cur[4]
-        room['is_open'] = cur[5]
+        room['allowed'] = cur[2]
+        room['automati_enable'] = cur[3]
+        room['co2'] = cur[4]
+        room['humidity'] = cur[5]
+        room['is_open'] = cur[6]
         room['windows'] = []
 
         for cur_w in cursor.execute(
