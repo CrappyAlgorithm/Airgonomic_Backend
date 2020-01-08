@@ -8,20 +8,22 @@ CREATE TABLE configuration (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     co2 INTEGER,
     humidity REAL,
-    automatik_enable INTEGER NOT NULL
+    automatic_enable INTEGER NOT NULL
 );
 
 CREATE TABLE room (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     is_open INTEGER NOT NULL,
-    automatik_enable INTEGER NOT NULL
+    automatic_enable INTEGER NOT NULL,
+    co2 INTEGER,
+    humidity REAL
 );
 
 CREATE TABLE window (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     room_id INTEGER NOT NULL,
     is_open INTEGER NOT NULL,
-    automatik_enable NOT NULL,
+    automatic_enable NOT NULL,
     FOREIGN KEY (room_id) REFERENCES room (id)
 );
 
