@@ -28,7 +28,7 @@ def user():
             is_admin = int(request.args.get('is_admin', -1))
             allow_room = int(request.args.get('allow_room', -1))
             revoke_room = int(request.args.get('revoke_room', -1))
-        catch ValueError:
+        except ValueError:
             return Response('Error while parsing parameters', status=rc.BAD_REQUEST)
         #check variable range for boolean
         if not user_id:

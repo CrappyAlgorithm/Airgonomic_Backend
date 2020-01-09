@@ -27,7 +27,7 @@ def configuration():
             co2 = int(request.args.get('co2', -1))
             humidity = float(request.args.get('humidity', -1.0))
             automatic_enable = int(request.args.get('automatic_enable', -1))
-        catch ValueError:
+        except ValueError:
             return Response('Error while parsing parameter.', status=rc.BAD_REQUEST)
         set_configuration(db, co2, huidity, automatic_enable)
         return Response('', status=rc.OK)
