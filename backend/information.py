@@ -5,12 +5,12 @@ from backend.util import response_code as rc
 from backend.util.db import get_db
 
 bp = Blueprint('information', __name__, url_prefix='/information')
+db = get_db()
 
 @bp.route('/',methods=['GET'])
 def information():
     if request.method == 'GET':
         token = request.args.get('token', '')
-        db = get_db()
 
         if not token:
             return Response('Authentification token is required', status=rc.PRECONDITION_FAILED)
@@ -20,9 +20,9 @@ def information():
             'SELECT id FROM user WHERE id = ?', (user_id,)
         ).fetchone() is None:
             return Response('Not authorized', status=rc.UNAUTHORIZED)
-        return Response(generate_view(db, user_id), status=rc.OK, mimetype='application/json')
+        return Response(generate_view(user_id), status=rc.OK, mimetype='application/json')
 
-def generate_view(db, user_id):
+def generate_view(user_id):
     cursor = db.cursor()
     ret = {}
     ret['rooms'] = []

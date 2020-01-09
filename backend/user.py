@@ -6,11 +6,11 @@ from backend.util.db import get_db
 from backend.util.arg_parser import parse
 
 bp = Blueprint('user', __name__, url_prefix='/user')
+db = get_db()
 
 @bp.route('/',methods=['GET', 'PUT'])
 def user():
     token = request.args.get('token', '')
-    db = get_db()
     if not token:
         return Response('Authentification token is required', status=rc.UNAUTHORIZED)
     #need to be changed for token use
@@ -21,7 +21,7 @@ def user():
         return Response('Not authorized', status=rc.FORBIDDEN)
 
     if request.method == 'GET':
-        return Response(generate_view(db), status=rc.OK, mimetype='application/json')
+        return Response(generate_view(), status=rc.OK, mimetype='application/json')
 
     if request.method == 'PUT':
         user_id = parse(request.args.get('id', None), 0)
@@ -32,7 +32,7 @@ def user():
             'SELECT id FROM user WHERE id = ?', (user_id,)
         ).fetchone() is None:
             return Response('No valid user id given', status=rc.FORBIDDEN)
-        set_values(db, user_id, is_admin, allow_room, revoke_room)
+        set_values(user_id, is_admin, allow_room, revoke_room)
         return Response('', status=rc.OK)
 
 def generate_view(db):

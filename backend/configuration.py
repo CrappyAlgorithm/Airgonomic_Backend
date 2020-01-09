@@ -6,11 +6,11 @@ from backend.util.db import get_db
 from backend.util.arg_parser import parse
 
 bp = Blueprint('configuration', __name__, url_prefix='/configuration')
+db = get_db()
 
 @bp.route('/',methods=['GET', 'PUT'])
 def configuration():
     token = request.args.get('token', '')
-    db = get_db()
     if not token:
         return Response('Authentification token is required', status=rc.UNAUTHORIZED)
     #need to be changed for token use
@@ -21,16 +21,16 @@ def configuration():
         return Response('Not authorized', status=rc.FORBIDDEN)
 
     if request.method == 'GET':
-        return Response(generate_view(db), status=rc.OK, mimetype='application/json')
+        return Response(generate_view(), status=rc.OK, mimetype='application/json')
 
     if request.method == 'PUT':
         co2 = parse(request.args.get('co2', None), 0, min=0)
         humidity = parse(request.args.get('humidity', None), 0.0, min=0, max=100)
         automatic_enable = parse(request.args.get('automatic_enable', None), 0, min=0, max=1)
-        set_configuration(db, co2, humidity, automatic_enable)
+        set_configuration(co2, humidity, automatic_enable)
         return Response('', status=rc.OK)
 
-def generate_view(db):
+def generate_view():
     cursor = db.cursor()
     ret = {}
     for cur in cursor.execute(
@@ -41,7 +41,7 @@ def generate_view(db):
         ret['automatic_enable'] = cur[2]
     return json.dumps(ret)
 
-def set_configuration(db, co2, humidity, automatic_enable):
+def set_configuration(co2, humidity, automatic_enable):
     if co2 is not None:
         db.execute(
             'UPDATE configuration SET co2 = ? ' +

@@ -5,13 +5,13 @@ from backend.util import response_code as rc
 from backend.util.db import get_db
 
 bp = Blueprint('login', __name__, url_prefix='/login')
+db = get_db()
 
 @bp.route('/',methods=['GET'])
 def login():
     if request.method == 'GET':
         username = request.args.get('username', '')
         password = request.args.get('password', '')
-        db = get_db()
 
         if not username:
             return Response('Username is required', status=rc.PRECONDITION_FAILED)
