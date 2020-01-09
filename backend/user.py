@@ -7,7 +7,7 @@ from backend.db import get_db
 bp = Blueprint('user', __name__, url_prefix='/user')
 
 @bp.route('/',methods=['GET', 'POST'])
-def information():
+def user():
     token = request.args.get('token', '')
     db = get_db()
     if not token:
@@ -23,16 +23,18 @@ def information():
         return Response(generate_view(db), status=rc.OK, mimetype='application/json')
 
     if request.method == 'POST':
-        user_id = int(request.args.get('id', 0))
-        is_admin = int(request.args.get('is_admin', -1)) #wrong output if not given!
-        allow_room = int(request.args.get('allow_room', -1))
-        revoke_room = int(request.args.get('revoke_room', -1))
+        try:
+            user_id = int(request.args.get('id', 0))
+            is_admin = int(request.args.get('is_admin', -1))
+            allow_room = int(request.args.get('allow_room', -1))
+            revoke_room = int(request.args.get('revoke_room', -1))
+        catch ValueError:
+            return Response('Error while parsing parameters', status=rc.BAD_REQUEST)
         #check variable range for boolean
         if not user_id:
             return Response('User id is required', status=rc.PRECONDITION_FAILED)
         set_values(db, user_id, is_admin, allow_room, revoke_room)
         return Response('', status=rc.OK)
-
 
 def generate_view(db):
     cursor = db.cursor()
@@ -63,7 +65,7 @@ def generate_view(db):
     return json.dumps(ret)
 
 def set_values(db, user_id, is_admin, allow_room, revoke_room):
-    if is_admin >= 0:
+    if is_admin >= 0 and is_admin < 2:
         db.execute(
             'UPDATE user SET is_admin = ? ' +
             'WHERE id = ?',
