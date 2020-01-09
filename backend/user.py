@@ -3,6 +3,7 @@ import json
 from flask import (Blueprint, Response, request)
 from . import response_code as rc
 from backend.db import get_db
+from backend.util.arg_parser import parse
 
 bp = Blueprint('user', __name__, url_prefix='/user')
 
@@ -11,28 +12,26 @@ def user():
     token = request.args.get('token', '')
     db = get_db()
     if not token:
-        return Response('Authentification token is required', status=rc.PRECONDITION_FAILED)
+        return Response('Authentification token is required', status=rc.UNAUTHORIZED)
     #need to be changed for token use
     user_id = int(token)
     if db.execute(
         'SELECT id FROM user WHERE id = ? AND is_admin = 1', (user_id,)
     ).fetchone() is None:
-        return Response('Not authorized', status=rc.UNAUTHORIZED)
+        return Response('Not authorized', status=rc.FORBIDDEN)
 
     if request.method == 'GET':
         return Response(generate_view(db), status=rc.OK, mimetype='application/json')
 
     if request.method == 'PUT':
-        try:
-            user_id = int(request.args.get('id', 0))
-            is_admin = int(request.args.get('is_admin', -1))
-            allow_room = int(request.args.get('allow_room', -1))
-            revoke_room = int(request.args.get('revoke_room', -1))
-        except ValueError:
-            return Response('Error while parsing parameters', status=rc.BAD_REQUEST)
-        #check variable range for boolean
-        if not user_id:
-            return Response('User id is required', status=rc.PRECONDITION_FAILED)
+        user_id = parse(request.args.get('id', None), 0)
+        is_admin = parse(request.args.get('is_admin', None), 0, min=0, max=1)
+        allow_room = parse(request.args.get('allow_room', None), 0, min=0, max=1)
+        revoke_room = parse(request.args.get('revoke_room', None), 0, min=0, max=1)
+        if db.execute(
+            'SELECT id FROM user WHERE id = ?', (user_id,)
+        ).fetchone() is None:
+            return Response('No valid user id given', status=rc.FORBIDDEN)
         set_values(db, user_id, is_admin, allow_room, revoke_room)
         return Response('', status=rc.OK)
 
