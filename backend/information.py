@@ -1,8 +1,8 @@
 import functools
 import json
 from flask import (Blueprint, Response, request)
-from . import response_code as rc
-from backend.db import get_db
+from backend.util import response_code as rc
+from backend.util.db import get_db
 
 bp = Blueprint('information', __name__, url_prefix='/information')
 

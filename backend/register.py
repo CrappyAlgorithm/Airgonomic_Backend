@@ -1,7 +1,7 @@
 import functools
 from flask import (Blueprint, Response, request)
-from . import response_code as rc
-from backend.db import get_db
+from backend.util import response_code as rc
+from backend.util.db import get_db
 
 bp = Blueprint('register', __name__, url_prefix='/register')
 
@@ -21,11 +21,8 @@ def register():
         ).fetchone() is not None:
             return Response('User {} is already registered.'.format(username), status=rc.CONFLICT)
 
-        if error is None:
-            #insert user to db and generate link to all rooms/windows
-            add_user(db, username, password)
-            return Response('', status=rc.CREATED)
-        return error
+        add_user(db, username, password)
+        return Response('', status=rc.CREATED)
 
 def add_user(db, username, password):
     cursor = db.cursor()

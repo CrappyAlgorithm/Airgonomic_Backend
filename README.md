@@ -3,6 +3,7 @@
 # Einrichtung der Entwicklungsumgebung in VSCode:
 - Projekt clonen
 - Projektordner in der Konsole öffnen
+- install virtualenv
 - Linux: 
 ```sh
 $ python3 -m venv venv
@@ -12,6 +13,7 @@ $ python3 -m venv venv
 $ python -m venv venv
 ```
 - Projektordner in VSCode öffnen
+- Python extension
 - Strg+Shift+P "Python: Select Interpreter" auswählen
 - Den Interpreter mit der Angabe "venv" auswählen
 - Rechtsklick auf den Ordner venv und "Open in Terminal" auswählen

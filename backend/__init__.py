@@ -26,7 +26,7 @@ def create_app(test_config=None):
     def hello():
         return 'Blub'
     
-    from . import db
+    from backend.util import db
     db.init_app(app)
 
     from . import register
