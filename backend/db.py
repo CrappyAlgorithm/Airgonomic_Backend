@@ -22,7 +22,7 @@ def close_db(e=None):
 def init_db():
     db = get_db()
 
-    with current_app.open_resource('schema.sql') as f:
+    with current_app.open_resource('sql_scripts/schema.sql') as f:
         db.executescript(f.read().decode('utf8'))
 
 @click.command('init-db')
@@ -34,7 +34,7 @@ def init_db_command():
 def sample_db():
     db = get_db()
 
-    with current_app.open_resource('sample.sql') as f:
+    with current_app.open_resource('sql_scripts/sample.sql') as f:
         db.executescript(f.read().decode('utf8'))
 
 @click.command('sample-db')
