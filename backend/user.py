@@ -6,7 +6,7 @@ from backend.db import get_db
 
 bp = Blueprint('user', __name__, url_prefix='/user')
 
-@bp.route('/',methods=['GET', 'POST'])
+@bp.route('/',methods=['GET', 'PUT'])
 def user():
     token = request.args.get('token', '')
     db = get_db()
@@ -22,7 +22,7 @@ def user():
     if request.method == 'GET':
         return Response(generate_view(db), status=rc.OK, mimetype='application/json')
 
-    if request.method == 'POST':
+    if request.method == 'PUT':
         try:
             user_id = int(request.args.get('id', 0))
             is_admin = int(request.args.get('is_admin', -1))
