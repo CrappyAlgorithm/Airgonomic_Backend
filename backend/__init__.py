@@ -24,24 +24,16 @@ def create_app(test_config=None):
 
     @app.route('/')
     def hello():
-        return 'Blub'
+        return 418
     
     from backend.util import db
     db.init_app(app)
 
-    from . import register
+    from backend.resources import *
     app.register_blueprint(register.bp)
-
-    from . import login
     app.register_blueprint(login.bp)
-
-    from . import information
     app.register_blueprint(information.bp)
-
-    from . import user
     app.register_blueprint(user.bp)
-
-    from . import configuration
     app.register_blueprint(configuration.bp) 
 
     return app
