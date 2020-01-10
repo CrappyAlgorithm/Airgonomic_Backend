@@ -30,6 +30,7 @@ def user():
 
 def generate_view(db):
     cursor = db.cursor()
+    cursor_r = db.cursor()
     ret = {}
     ret['user'] = []
     for cur in cursor.execute(
@@ -42,7 +43,7 @@ def generate_view(db):
         user['is_admin'] = cur[2]
         user['rooms'] = []
 
-        for cur_r in cursor.execute(
+        for cur_r in cursor_r.execute(
             'SELECT room.id, assignment.allowed ' +
             'FROM room join assignment ' +
             'ON room.id = assignment.room_id ' +
