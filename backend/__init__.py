@@ -31,7 +31,7 @@ def create_app(test_config=None):
     db.init_app(app)
 
     from backend.resources import (
-        register, login, information, user, configuration, window
+        register, login, information, user, configuration, window, room
     )
     app.register_blueprint(register.bp)
     app.register_blueprint(login.bp)
@@ -39,5 +39,6 @@ def create_app(test_config=None):
     app.register_blueprint(user.bp)
     app.register_blueprint(configuration.bp)
     app.register_blueprint(window.bp)
+    app.register_blueprint(room.bp)
 
     return app
