@@ -58,20 +58,20 @@ def generate_view(db):
     return json.dumps(ret)
 
 def set_values(db, user_id, is_admin, allow_room, revoke_room):
-    if is_admin >= 0 and is_admin < 2:
+    if is_admin is not None:
         db.execute(
             'UPDATE user SET is_admin = ? ' +
             'WHERE id = ?',
             (is_admin, user_id)
         )
-    if allow_room >= 0:
+    if allow_room is not None:
         db.execute(
             'UPDATE assignment SET allowed = 1 ' +
             'WHERE user_id = ? ' +
             'AND room_id = ?',
             (user_id, allow_room)
         )
-    if revoke_room >= 0:
+    if revoke_room is not None:
         db.execute(
             'UPDATE assignment SET allowed = 0 ' +
             'WHERE user_id = ? ' +
