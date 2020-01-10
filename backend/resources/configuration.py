@@ -4,14 +4,14 @@ from flask import (Blueprint, Response, request)
 from backend.util import response_code as rc
 from backend.util.db import get_db
 from backend.util.arg_parser import parse
-from backend.util.security import is_admin
+from backend.util.security import check_admin
 
 bp = Blueprint('configuration', __name__, url_prefix='/configuration')
 
 @bp.route('/',methods=['GET', 'PUT'])
 def configuration():
     db = get_db()
-    is_admin(request.args.get('token', None))
+    check_admin(request.args.get('token', None))
 
     if request.method == 'GET':
         return Response(generate_view(db), status=rc.OK, mimetype='application/json')

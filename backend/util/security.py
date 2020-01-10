@@ -14,7 +14,7 @@ def get_user(token):
         abort(BAD_REQUEST)
     return user_id
 
-def is_admin(token):
+def check_admin(token):
     db = get_db()
     user_id = get_user(token)
     if db.execute(
