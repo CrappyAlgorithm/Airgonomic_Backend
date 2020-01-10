@@ -31,12 +31,13 @@ def create_app(test_config=None):
     db.init_app(app)
 
     from backend.resources import (
-        register, login, information, user, configuration
+        register, login, information, user, configuration, window
     )
     app.register_blueprint(register.bp)
     app.register_blueprint(login.bp)
     app.register_blueprint(information.bp)
     app.register_blueprint(user.bp)
-    app.register_blueprint(configuration.bp) 
+    app.register_blueprint(configuration.bp)
+    app.register_blueprint(window.bp)
 
     return app
