@@ -5,10 +5,10 @@ from backend.util import response_code as rc
 from backend.util.db import get_db
 
 bp = Blueprint('login', __name__, url_prefix='/login')
-db = get_db()
 
 @bp.route('/',methods=['GET'])
 def login():
+    db = get_db()
     if request.method == 'GET':
         username = request.args.get('username', '')
         password = request.args.get('password', '')
@@ -22,7 +22,6 @@ def login():
         ).fetchone()
         if user is None:
             return Response('User {} is not registered.'.format(username), status=rc.NOT_FOUND)
-
         if password != user[1]:
             return Response('Password is wrong.', status=rc.FORBIDDEN)
 

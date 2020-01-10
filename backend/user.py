@@ -4,24 +4,17 @@ from flask import (Blueprint, Response, request)
 from backend.util import response_code as rc
 from backend.util.db import get_db
 from backend.util.arg_parser import parse
+from backend.util.security import is_admin
 
 bp = Blueprint('user', __name__, url_prefix='/user')
-db = get_db()
 
 @bp.route('/',methods=['GET', 'PUT'])
 def user():
-    token = request.args.get('token', '')
-    if not token:
-        return Response('Authentification token is required', status=rc.UNAUTHORIZED)
-    #need to be changed for token use
-    user_id = int(token)
-    if db.execute(
-        'SELECT id FROM user WHERE id = ? AND is_admin = 1', (user_id,)
-    ).fetchone() is None:
-        return Response('Not authorized', status=rc.FORBIDDEN)
+    db = get_db()
+    is_admin(request.args.get('token', None))
 
     if request.method == 'GET':
-        return Response(generate_view(), status=rc.OK, mimetype='application/json')
+        return Response(generate_view(db), status=rc.OK, mimetype='application/json')
 
     if request.method == 'PUT':
         user_id = parse(request.args.get('id', None), 0)
@@ -31,8 +24,8 @@ def user():
         if db.execute(
             'SELECT id FROM user WHERE id = ?', (user_id,)
         ).fetchone() is None:
-            return Response('No valid user id given', status=rc.FORBIDDEN)
-        set_values(user_id, is_admin, allow_room, revoke_room)
+            return Response('No valid user id given', status=rc.BAD_REQUEST)
+        set_values(db, user_id, is_admin, allow_room, revoke_room)
         return Response('', status=rc.OK)
 
 def generate_view(db):

@@ -4,33 +4,26 @@ from flask import (Blueprint, Response, request)
 from backend.util import response_code as rc
 from backend.util.db import get_db
 from backend.util.arg_parser import parse
+from backend.util.security import is_admin
 
 bp = Blueprint('configuration', __name__, url_prefix='/configuration')
-db = get_db()
 
 @bp.route('/',methods=['GET', 'PUT'])
 def configuration():
-    token = request.args.get('token', '')
-    if not token:
-        return Response('Authentification token is required', status=rc.UNAUTHORIZED)
-    #need to be changed for token use
-    user_id = int(token)
-    if db.execute(
-        'SELECT id FROM user WHERE id = ? AND is_admin = 1', (user_id,)
-    ).fetchone() is None:
-        return Response('Not authorized', status=rc.FORBIDDEN)
+    db = get_db()
+    is_admin(request.args.get('token', None))
 
     if request.method == 'GET':
-        return Response(generate_view(), status=rc.OK, mimetype='application/json')
+        return Response(generate_view(db), status=rc.OK, mimetype='application/json')
 
     if request.method == 'PUT':
         co2 = parse(request.args.get('co2', None), 0, min=0)
         humidity = parse(request.args.get('humidity', None), 0.0, min=0, max=100)
         automatic_enable = parse(request.args.get('automatic_enable', None), 0, min=0, max=1)
-        set_configuration(co2, humidity, automatic_enable)
+        set_configuration(db, co2, humidity, automatic_enable)
         return Response('', status=rc.OK)
 
-def generate_view():
+def generate_view(db):
     cursor = db.cursor()
     ret = {}
     for cur in cursor.execute(
@@ -41,7 +34,7 @@ def generate_view():
         ret['automatic_enable'] = cur[2]
     return json.dumps(ret)
 
-def set_configuration(co2, humidity, automatic_enable):
+def set_configuration(db, co2, humidity, automatic_enable):
     if co2 is not None:
         db.execute(
             'UPDATE configuration SET co2 = ? ' +

@@ -4,10 +4,10 @@ from backend.util import response_code as rc
 from backend.util.db import get_db
 
 bp = Blueprint('register', __name__, url_prefix='/register')
-db = get_db()
 
 @bp.route('/',methods=['POST'])
 def register():
+    db = get_db()
     if request.method == 'POST':
         username = request.args.get('username', '')
         password = request.args.get('password', '')
@@ -21,10 +21,10 @@ def register():
         ).fetchone() is not None:
             return Response('User {} is already registered.'.format(username), status=rc.CONFLICT)
 
-        add_user(username, password)
+        add_user(db, username, password)
         return Response('', status=rc.CREATED)
 
-def add_user(username, password):
+def add_user(db, username, password):
     cursor = db.cursor()
     db.execute(
         'INSERT INTO user (username, password, is_admin) VALUES (?,?,0)',

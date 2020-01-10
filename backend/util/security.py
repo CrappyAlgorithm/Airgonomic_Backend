@@ -1,5 +1,5 @@
 from flask import abort
-from backend.util.db import get_db() 
+from backend.util.db import get_db
 from backend.util.response_code import *
 from backend.util.arg_parser import parse
 
