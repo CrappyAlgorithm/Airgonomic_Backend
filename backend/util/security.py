@@ -15,6 +15,7 @@ def get_user(token):
     return user_id
 
 def is_admin(token):
+    db = get_db()
     user_id = get_user(token)
     if db.execute(
         'SELECT id FROM user WHERE id = ? AND is_admin = 1', (user_id,)
