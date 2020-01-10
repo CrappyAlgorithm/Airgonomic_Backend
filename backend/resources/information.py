@@ -16,6 +16,7 @@ def information():
 
 def generate_view(db, user_id):
     cursor = db.cursor()
+    cursor_w = db.cursor()
     ret = {}
     ret['rooms'] = []
     for cur in cursor.execute(
@@ -36,7 +37,7 @@ def generate_view(db, user_id):
         room['is_open'] = cur[6]
         room['windows'] = []
 
-        for cur_w in cursor.execute(
+        for cur_w in cursor_w.execute(
             'SELECT window.id, assignment.alias, window.automatic_enable, window.is_open ' +
             'FROM window join assignment ' +
             'ON window.id = assignment.window_id ' +
