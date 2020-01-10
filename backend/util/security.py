@@ -12,6 +12,7 @@ def get_user(token):
         'SELECT id FROM user WHERE id = ?', (user_id,)
     ).fetchone() is None:
         abort(BAD_REQUEST)
+    return user_id
 
 def is_admin(token):
     user_id = get_user(token)
