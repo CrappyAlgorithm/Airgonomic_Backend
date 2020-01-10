@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask
+from flask import Flask, abort
 
 def create_app(test_config=None):
     app = Flask(__name__, instance_relative_config=True)
@@ -24,12 +24,15 @@ def create_app(test_config=None):
 
     @app.route('/')
     def hello():
-        return 418
+        #return 'The magic Teapot',418
+        abort(418)
     
     from backend.util import db
     db.init_app(app)
 
-    from backend.resources import *
+    from backend.resources import (
+        register, login, information, user, configuration
+    )
     app.register_blueprint(register.bp)
     app.register_blueprint(login.bp)
     app.register_blueprint(information.bp)
