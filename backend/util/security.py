@@ -50,3 +50,14 @@ def check_user_window(token, window_id):
         (window_id,)
     ).fetchone()
     return check_user_room(token, room_id)
+
+def get_room(token):
+    db = get_db()
+    if token is None:
+        abort(UNAUTHORIZED)
+    id = parse(token, 0, min=0)
+    if db.execute(
+        'SELECT id FROM room WHERE id = ?', (id,)
+    ).fetchone() is None:
+        abort(BAD_REQUEST)
+    return id
