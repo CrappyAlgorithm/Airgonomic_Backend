@@ -42,8 +42,7 @@ def room_control():
         co2 = parse(request.args.get('co2', None), 0, min=0)
         humidity = parse(request.args.get('humidity', None), 0.0, min=0)
         is_open = parse(request.args.get('is_open', None), 0, min=0, max=1)
-        automatic_enable = parse(request.args.get('automatic_enable', None), 0, min=0, max=1)
-        set_values(db, room_id, co2=co2, humidity=humidity, automatic_enable=automatic_enable, is_open=is_open)
+        set_values(db, room_id, co2=co2, humidity=humidity, is_open=is_open)
         return Response('', status=OK)
 
     if request.method == 'POST':
