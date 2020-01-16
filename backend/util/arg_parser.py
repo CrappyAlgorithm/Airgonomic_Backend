@@ -1,5 +1,6 @@
 from typing import TypeVar
 from flask import abort
+from backend.util.response_code import *
 
 T = TypeVar('T', int, float)
 
@@ -10,12 +11,12 @@ def parse(value, val_type : T, min: T=None, max: T=None):
     try:
         val = type(val_type)(value)
     except ValueError:
-        abort(400)
+        abort(BAD_REQUEST)
 
     if min is not None:
         if val < min:
-            abort(400)
+            abort(BAD_REQUEST)
     if max is not None:
         if val > max:
-            abort(400)
+            abort(BAD_REQUEST)
     return val

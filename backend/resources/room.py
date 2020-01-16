@@ -8,16 +8,19 @@ from backend.util.security import check_user_room, get_user, get_room
 
 bp = Blueprint('room', __name__, url_prefix='/room')
 
-@bp.route('/',methods=['PUT'])
+@bp.route('',methods=['PUT'])
 def room():
     db = get_db()
 
     if request.method == 'PUT':
-        user_id = None
-        room_id = parse(request.args.get('id', None), 0, min=1)
-        alias = request.args.get('alias', None)
-        is_open = parse(request.args.get('is_open', None), 0, min=0, max=1)
-        automatic_enable = parse(request.args.get('automatic_enable', None), 0, min=0, max=1)
+        user_id = None        
+        data = request.get_json()
+        if not data:
+            return Response('No valid json was send.', status=BAD_REQUEST)
+        room_id = parse(data.get('id', None), 0, min=1)
+        alias = data.get('alias', None)
+        is_open = parse(data.get('is_open', None), 0, min=0, max=1)
+        automatic_enable = parse(data.get('automatic_enable', None), 0, min=0, max=1)
         if db.execute(
             'SELECT id FROM room WHERE id = ?', (room_id,)
         ).fetchone() is None:
@@ -29,7 +32,7 @@ def room():
         set_values(db, room_id, user_id, alias, is_open, automatic_enable)
         return Response('', status=OK)
 
-@bp.route('/control/',methods=['GET', 'PUT', 'POST'])
+@bp.route('/control',methods=['GET', 'PUT', 'POST'])
 def room_control():
     db = get_db()
 
@@ -39,9 +42,12 @@ def room_control():
 
     if request.method == 'PUT':
         room_id = get_room(request.args.get('token', None))
-        co2 = parse(request.args.get('co2', None), 0, min=0)
-        humidity = parse(request.args.get('humidity', None), 0.0, min=0)
-        is_open = parse(request.args.get('is_open', None), 0, min=0, max=1)
+        data = request.get_json()
+        if not data:
+            return Response('No valid json was send.', status=BAD_REQUEST)
+        co2 = parse(data.get('co2', None), 0, min=0)
+        humidity = parse(data.get('humidity', None), 0.0, min=0)
+        is_open = parse(data.get('is_open', None), 0, min=0, max=1)
         set_values(db, room_id, co2=co2, humidity=humidity, is_open=is_open)
         return Response('', status=OK)
 
@@ -86,30 +92,16 @@ def generate_view(db, room_id):
     cursor = db.cursor()
     ret = {}
     cur = db.execute(
-        'SELECT automatic_enable, co2, humidity, is_open ' +
+        'SELECT id, automatic_enable, co2, humidity, is_open ' +
         'FROM room ' +
         'WHERE room.id = ?',
         (room_id,)
     ).fetchone()
-    room = {}
-    room['automati_enable'] = cur[0]
-    room['co2'] = cur[1]
-    room['humidity'] = cur[2]
-    room['is_open'] = cur[3]
-    room['windows'] = []
-
-    for cur in cursor.execute(
-        'SELECT id, automatic_enable, is_open ' +
-        'FROM window ' +
-        'WHERE window.room_id = ? ',
-        (room_id,)
-    ):
-        window = {}
-        window['id'] = cur[0]
-        window['automatic_enable'] = cur[1]
-        window['is_open'] = cur[2]
-        room['windows'].append(window)
-    ret['room'] = room
+    ret['id'] = cur[0]
+    ret['automati_enable'] = cur[1]
+    ret['co2'] = cur[2]
+    ret['humidity'] = cur[3]
+    ret['is_open'] = cur[4]
     return json.dumps(ret)
 
 def create_room(db):

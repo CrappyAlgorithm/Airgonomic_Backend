@@ -1,31 +1,33 @@
 import functools
 import json
 from flask import (Blueprint, Response, request)
-from backend.util import response_code as rc
+from backend.util.response_code import *
 from backend.util.db import get_db
 
 bp = Blueprint('login', __name__, url_prefix='/login')
 
-@bp.route('/',methods=['GET'])
+@bp.route('',methods=['GET'])
 def login():
     db = get_db()
     if request.method == 'GET':
-        username = request.args.get('username', '')
-        password = request.args.get('password', '')
-
+        data = request.get_json()
+        if not data:
+            return Response('No valid json was send.', status=BAD_REQUEST)
+        username = data.get('username', None)
+        password = data.get('password', None)
         if not username:
-            return Response('Username is required', status=rc.PRECONDITION_FAILED)
+            return Response('Username is required', status=PRECONDITION_FAILED)
         if not password:
-            return Response('Password is required', status=rc.PRECONDITION_FAILED)
+            return Response('Password is required', status=PRECONDITION_FAILED)
         user = db.execute(
             'SELECT id, password FROM user WHERE username = ?', (username,)
         ).fetchone()
         if user is None:
-            return Response('User {} is not registered.'.format(username), status=rc.NOT_FOUND)
+            return Response('User {} is not registered.'.format(username), status=NOT_FOUND)
         if password != user[1]:
-            return Response('Password is wrong.', status=rc.FORBIDDEN)
+            return Response('Password is wrong.', status=FORBIDDEN)
 
         #replace generate and set token, to use real auth token
         ret = {}
         ret['token'] = user[0]
-        return Response(json.dumps(ret), status=rc.OK, mimetype='application/json')
+        return Response(json.dumps(ret), status=OK, mimetype='application/json')

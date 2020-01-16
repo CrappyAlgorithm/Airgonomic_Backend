@@ -1,18 +1,18 @@
 import functools
 import json
 from flask import (Blueprint, Response, request)
-from backend.util import response_code as rc
+from backend.util.response_code import *
 from backend.util.db import get_db
 from backend.util.security import get_user
 
 bp = Blueprint('information', __name__, url_prefix='/information')
 
-@bp.route('/',methods=['GET'])
+@bp.route('',methods=['GET'])
 def information():
     db = get_db()
     if request.method == 'GET':
         user_id = get_user(request.args.get('token', None))
-        return Response(generate_view(db, user_id), status=rc.OK, mimetype='application/json')
+        return Response(generate_view(db, user_id), status=OK, mimetype='application/json')
 
 def generate_view(db, user_id):
     cursor = db.cursor()

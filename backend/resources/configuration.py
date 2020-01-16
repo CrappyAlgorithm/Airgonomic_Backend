@@ -1,27 +1,30 @@
 import functools
 import json
 from flask import (Blueprint, Response, request)
-from backend.util import response_code as rc
+from backend.util.response_code import *
 from backend.util.db import get_db
 from backend.util.arg_parser import parse
 from backend.util.security import check_admin
 
 bp = Blueprint('configuration', __name__, url_prefix='/configuration')
 
-@bp.route('/',methods=['GET', 'PUT'])
+@bp.route('',methods=['GET', 'PUT'])
 def configuration():
     db = get_db()
     check_admin(request.args.get('token', None))
 
     if request.method == 'GET':
-        return Response(generate_view(db), status=rc.OK, mimetype='application/json')
+        return Response(generate_view(db), status=OK, mimetype='application/json')
 
     if request.method == 'PUT':
-        co2 = parse(request.args.get('co2', None), 0, min=0)
-        humidity = parse(request.args.get('humidity', None), 0.0, min=0, max=100)
-        automatic_enable = parse(request.args.get('automatic_enable', None), 0, min=0, max=1)
+        data = request.get_json()
+        if not data:
+            return Response('No valid json was send.', status=BAD_REQUEST)
+        co2 = parse(data.get('co2', None), 0, min=0)
+        humidity = parse(data.get('humidity', None), 0.0, min=0, max=100)
+        automatic_enable = parse(data.get('automatic_enable', None), 0, min=0, max=1)
         set_configuration(db, co2, humidity, automatic_enable)
-        return Response('', status=rc.OK)
+        return Response('', status=OK)
 
 def generate_view(db):
     cursor = db.cursor()

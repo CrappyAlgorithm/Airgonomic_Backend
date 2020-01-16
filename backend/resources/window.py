@@ -14,10 +14,13 @@ def window():
 
     if request.method == 'PUT':
         user_id = None
-        window_id = parse(request.args.get('id', None), 0, min=1)
-        alias = request.args.get('alias', None)
-        is_open = parse(request.args.get('is_open', None), 0, min=0, max=1)
-        automatic_enable = parse(request.args.get('automatic_enable', None), 0, min=0, max=1)
+        data = request.get_json()
+        if not data:
+            return Response('No valid json was send.', status=BAD_REQUEST)
+        window_id = parse(data.get('id', None), 0, min=1)
+        alias = data.get('alias', None)
+        is_open = parse(data.get('is_open', None), 0, min=0, max=1)
+        automatic_enable = parse(data.get('automatic_enable', None), 0, min=0, max=1)
         if db.execute(
             'SELECT id FROM window WHERE id = ?', (window_id,)
         ).fetchone() is None:
@@ -29,15 +32,25 @@ def window():
         set_values(db, window_id, user_id, alias, is_open, automatic_enable)
         return Response('', status=OK)
 
-@bp.route('/control/',methods=['PUT', 'POST'])
+@bp.route('/control',methods=['GET', 'PUT', 'POST'])
 def window_control():
     db = get_db()
     room_id = get_room(request.args.get('token', None))
 
+    if request.method == 'GET':
+        data = request.get_json()
+        if not data:
+            return Response('No valid json was send.', status=BAD_REQUEST)
+        window_id = parse(data.get('id', None), 0, min=1)
+        return Response(generate_view(db, window_id), status=OK, mimetype='application/json')
+
     if request.method == 'PUT':
-        window_id = parse(request.args.get('id', None), 0, min=1)
-        is_open = parse(request.args.get('is_open', None), 0, min=0, max=1)
-        automatic_enable = parse(request.args.get('automatic_enable', None), 0, min=0, max=1)
+        data = request.get_json()
+        if not data:
+            return Response('No valid json was send.', status=BAD_REQUEST)
+        window_id = parse(data.get('id', None), 0, min=1)
+        is_open = parse(data.get('is_open', None), 0, min=0, max=1)
+        automatic_enable = parse(data.get('automatic_enable', None), 0, min=0, max=1)
         if db.execute(
             'SELECT id FROM window WHERE id = ? and room_id = ?',
             (window_id, room_id)
@@ -48,6 +61,20 @@ def window_control():
 
     if request.method == 'POST':
         return Response(create_window(db, room_id), status=CREATED, mimetype='application/json')
+
+def generate_view(db, window_id):
+    cursor = db.cursor()
+    ret = {}
+    cur = db.execute(
+        'SELECT id, automatic_enable, is_open ' +
+        'FROM window ' +
+        'WHERE window.id = ? ',
+        (window_id,)
+    ).fetchone()
+    ret['id'] = cur[0]
+    ret['automatic_enable'] = cur[1]
+    ret['is_open'] = cur[2]
+    return json.dumps(ret)
 
 def set_values(db, window_id, user_id=None, alias=None, is_open=None, automatic_enable=None):
     if alias is not None and user_id is not None:

@@ -1,32 +1,35 @@
 import functools
 import json
 from flask import (Blueprint, Response, request)
-from backend.util import response_code as rc
+from backend.util.response_code import *
 from backend.util.db import get_db
 from backend.util.arg_parser import parse
 from backend.util.security import check_admin
 
 bp = Blueprint('user', __name__, url_prefix='/user')
 
-@bp.route('/',methods=['GET', 'PUT'])
+@bp.route('',methods=['GET', 'PUT'])
 def user():
     db = get_db()
     check_admin(request.args.get('token', None))
 
     if request.method == 'GET':
-        return Response(generate_view(db), status=rc.OK, mimetype='application/json')
+        return Response(generate_view(db), status=OK, mimetype='application/json')
 
     if request.method == 'PUT':
-        user_id = parse(request.args.get('id', None), 0)
-        is_admin = parse(request.args.get('is_admin', None), 0, min=0, max=1)
-        allow_room = parse(request.args.get('allow_room', None), 0, min=0, max=1)
-        revoke_room = parse(request.args.get('revoke_room', None), 0, min=0, max=1)
+        data = request.get_json()
+        if not data:
+            return Response('No valid json was send.', status=BAD_REQUEST)
+        user_id = parse(data.get('id', None), 0)
+        is_admin = parse(data.get('is_admin', None), 0, min=0, max=1)
+        allow_room = parse(data.get('allow_room', None), 0, min=0, max=1)
+        revoke_room = parse(data.get('revoke_room', None), 0, min=0, max=1)
         if db.execute(
             'SELECT id FROM user WHERE id = ?', (user_id,)
         ).fetchone() is None:
-            return Response('No valid user id given', status=rc.BAD_REQUEST)
+            return Response('No valid user id given', status=BAD_REQUEST)
         set_values(db, user_id, is_admin, allow_room, revoke_room)
-        return Response('', status=rc.OK)
+        return Response('', status=OK)
 
 def generate_view(db):
     cursor = db.cursor()

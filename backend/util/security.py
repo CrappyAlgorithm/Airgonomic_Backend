@@ -37,7 +37,7 @@ def check_user_room(token, room_id):
             'AND assignment.allowed = 1',
             (user_id,)
         ).fetchone() is None:
-            abort(400)
+            abort(BAD_REQUEST)
     return user_id
 
 def check_user_window(token, window_id):

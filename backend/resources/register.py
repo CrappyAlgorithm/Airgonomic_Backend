@@ -1,28 +1,30 @@
 import functools
 from flask import (Blueprint, Response, request)
-from backend.util import response_code as rc
+from backend.util.response_code import *
 from backend.util.db import get_db
 
 bp = Blueprint('register', __name__, url_prefix='/register')
 
-@bp.route('/',methods=['POST'])
+@bp.route('',methods=['POST'])
 def register():
     db = get_db()
     if request.method == 'POST':
-        username = request.args.get('username', '')
-        password = request.args.get('password', '')
-
+        data = request.get_json()
+        if not data:
+            return Response('No valid json was send.', status=BAD_REQUEST)
+        username = data.get("username", None)
+        password = data.get("password", None)
         if not username:
-            return Response('Username is required', status=rc.PRECONDITION_FAILED)
+            return Response('Username is required', status=PRECONDITION_FAILED)
         if not password:
-            return Response('Password is required', status=rc.PRECONDITION_FAILED)
+            return Response('Password is required', status=PRECONDITION_FAILED)
         if db.execute(
             'SELECT id FROM user WHERE username = ?', (username,)
         ).fetchone() is not None:
-            return Response('User {} is already registered.'.format(username), status=rc.CONFLICT)
+            return Response('User {} is already registered.'.format(username), status=CONFLICT)
 
         add_user(db, username, password)
-        return Response('', status=rc.CREATED)
+        return Response('', status=CREATED)
 
 def add_user(db, username, password):
     cursor = db.cursor()
