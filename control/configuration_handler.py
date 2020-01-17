@@ -1,5 +1,6 @@
 import csv
 from room import Room
+from window import Window
 
 filename = 'control/config.txt'
 
@@ -41,17 +42,26 @@ def load_configuration():
         #register room and windows in backend
         pass
     else:
+        room_id = room[0]
         room = Room(int(room[0]), backend[0], int(duration))
-        """
-        for i in range(0,window_count):
+        for i in range(1,window_count+1):
             window = conf.get(f'window_{str(i)}', None)
             if window is None:
                 # error in config window_i
-            window = Window(window[0], window[2], backend)
-            room.add_window(window)
-        """
+                print(f'window_{i} was not found.')
+                pass
+            else:
+                window = Window(window[0], room_id, backend[0])
+                room.add_window(window)
+        
     return room
     
 
 room = load_configuration()
+print(room)
+room.get_update()
+print(room)
+room.set_update()
+print(room)
+room.get_update()
 print(room)
