@@ -1,6 +1,6 @@
 import csv
-from room import Room
-from window import Window
+from room import Room, register_new_room
+from window import Window, register_new_window
 
 filename = 'control/config.txt'
 
@@ -39,8 +39,11 @@ def load_configuration():
         pass
     duration = int(duration[0])
     if room is None:
-        #register room and windows in backend
-        pass
+        room = register_new_room(backend[0], duration)
+        for i in range(1,window_count+1):
+            window = register_new_window(backend[0], room.get_id())
+            room.add_window(window)
+            
     else:
         room_id = room[0]
         room = Room(int(room[0]), backend[0], int(duration))

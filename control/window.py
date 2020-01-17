@@ -30,3 +30,13 @@ class Window:
         window['id'] = self.id
         window['is_open'] = self.open
         requests.put(self.backend, params=params, json=window)
+
+def register_new_window(backend, room_id):
+    params = {'token': room_id}
+    resp = requests.post(f'{backend}/window/control', params=params)
+    if resp.status_code == 201:
+        body = resp.json()
+        if body is not None:
+            id = int(body.get('id', 0))
+            return Window(id, room_id, backend)
+    return None

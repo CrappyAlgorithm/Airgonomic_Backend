@@ -27,6 +27,9 @@ class Room:
             s += str(window)
         return s
 
+    def get_id(self):
+        return self.id
+
     def get_update(self):
         params = {'token': self.id,}
         resp = requests.get(self.backend, params=params)
@@ -59,3 +62,13 @@ class Room:
         if start_time + duration < now():
             return True
         return False
+
+
+def register_new_room(backend, duration):
+    resp = requests.post(f'{backend}/room/control')
+    if resp.status_code == 201:
+        body = resp.json()
+        if body is not None:
+            id = int(body.get('token', 0))
+            return Room(id, backend, duration)
+    return None
