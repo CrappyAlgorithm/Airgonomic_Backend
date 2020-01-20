@@ -1,7 +1,8 @@
 
 import requests
 import json
-from window import Window, get_configuration
+import logging as log
+from window import Window
 from sensors.read_t6613_co2 import read_co2
 
 class Room:
@@ -16,8 +17,6 @@ class Room:
         self.open = 0
         self.force = 0
         self.windows = []
-        self.starttime = None
-        self.duration = duration
         self.override = False
 
     def __str__(self):
@@ -35,20 +34,24 @@ class Room:
         return self.id
 
     def get_update(self):
+        log.info(f'Get update for room {self.id}')
         params = {'token': self.id,}
         resp = requests.get(self.backend, params=params)
         if resp.status_code == 200:
             body = resp.json()
             self.automatic = int(body.get('automatic_enable', 0))
             self.force = int(body.get('is_open', 0))
-        for window in self.windows:
-            window.get_update()
-        new_co2 = read_co2()
-        if new_co2 is not None:
-            self.co2 = new_co2
-        print(f'Co2: {self.co2}ppm')
+            for window in self.windows:
+                window.get_update()
+            new_co2 = read_co2()
+            if new_co2 is not None:
+                self.co2 = new_co2
+                log.info(f'New co2 value for room {self.id} is: {self.co2}ppm')
+        else:
+            log.info(f'Update of room {self.id} not possible.')
 
     def set_update(self):
+        log.info(f'Set update for room {self.id}')
         params = {'token': self.id}
         room = {}
         room['is_open'] = self.open
@@ -63,66 +66,43 @@ class Room:
 
     def check_status(self):
         threshold = self.get_threshold()
-        print(f'room auto: {self.automatic}')
         if self.force != self.open:
             self.override = not self.override
             self.open = 1 if self.open == 0 else 0
-            print('Called force change')
+            log.info(f'Called force change for room: {self.id}')
             for window in self.windows:
                 window.change_state(self.force)
-            pass
         elif self.override:
-            print('Override active')
+            log.info('No change, override is active')
         elif self.automatic == 1 and int(threshold.get('automatic_enable')) == 1:
+            log.info('Starting air value check.')
             change = False
             if self.open == 0:
                 if self.co2 > int(threshold['co2']):
-                    print('Co2 is over threshold')
+                    log.info('Co2 is over threshold')
                     change = True
                 """
                 if self.humidity > int(threshold['humidity']):
-                    print('Humidity is over threshold')
+                    log.info('Humidity is over threshold')
                     change = True
                 """
             elif self.open == 1:
                 if self.co2 < int(threshold['co2']):
-                    print('Co2 is under threshold')
+                    log.info('Co2 is under threshold')
                     change = True
                 """
                 if self.humidity < int(threshold['humidity']):
-                    print('Humidity is under threshold')
+                    log.info('Humidity is under threshold')
                     change = True
                 """
             if change:
                 self.open = 1 if self.open == 0 else 0
-                #self.start_timer()
                 for window in self.windows:
                     window.change_state(self.open)
             else:
-                print('No change required.')
+                log.info('No change required.')
         else:
-            print('Automatic disabled')
-            pass
-        """
-        threshold = self.get_threshold()
-        if (self.force == self.open 
-        and self.automatic == 1 
-        and int(threshold['automatic_enable']) == 1):
-            if not self.change_required:
-                # do nothing
-                pass
-            else:
-                change = False
-                
-                
-                
-        elif self.force != self.open:
-            print('Force change')
-            for window in self.windows:
-                window.change_state()
-        else:
-            print('Automatic disabled and no force change.')
-        """
+            log.info('Automatic is disabled')
 
     def get_threshold(self):
         ret = {}
@@ -130,14 +110,17 @@ class Room:
         resp = requests.get(f'{self.backend_raw}/configuration/control', params=params)
         body = resp.json()
         if body is None:
-            # error 
-            pass
+            log.error(f'Cannot get threshold')
         return body
 
     def get_configuration(self):
-        ret = ''
-        ret += f'backend,{self.backend_raw},\n'
-        ret += f'room,{self.id},'
+        ret = f'backend,{self.backend_raw},\n'
+        ret += f'room,{self.id},\n'
+        id = 1
+        for window in windows:
+            ret += window.get_configuration(id)
+            id += 1
+        return ret
 
 def register_new_room(backend, duration):
     resp = requests.post(f'{backend}/room/control')
@@ -145,6 +128,8 @@ def register_new_room(backend, duration):
         body = resp.json()
         if body is not None:
             id = int(body.get('token', 0))
+            log.info(f'New room with id: {id} registerd.')
             return Room(id, backend, duration)
+    log.error('Register new room failed.')
     return None
 

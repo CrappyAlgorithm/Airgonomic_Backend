@@ -1,5 +1,6 @@
 import requests
 import json
+import logging as log
 
 class Window:
 
@@ -18,34 +19,40 @@ class Window:
         return s
 
     def get_update(self):
+        log.info(f'Get update for window {self.id}')
         params = {'token': self.room_id,}
         resp = requests.get(self.backend, params=params, json={'id':self.id,})
         if resp.status_code == 200:
             body = resp.json()
             self.automatic = int(body.get('automatic_enable', 0))
+        else:
+            log.error(f'Update for window {self.id} not possible')
 
     def set_update(self):
+        log.info(f'Set update for window {self.id}')
         params = {'token': self.room_id}
         window = {}
         window['id'] = self.id
         window['is_open'] = self.open
-        requests.put(self.backend, params=params, json=window)
+        resp = requests.put(self.backend, params=params, json=window)
+        if resp.status_code != 200:
+            log.error(f'Cannot set update for window {self.id}')
 
     def change_state(self, to_state):
         if to_state == self.open:
-            print('State already set.')
+            log.info(f'State {self.open} already set to window {self.id}.')
             return
         if self.automatic == 1:
             self.open = 1 if self.open == 0 else 0
             if self.open == 1:
-                print(f'Window{self.id} will be opened.')
+                log.info(f'Window {self.id} will be opened.')
             else:
-                print(f'Window{self.id} will be closed.')
+                log.info(f'Window {self.id} will be closed.')
         else:
-            print(f'Window{self.id} automatic disabled')
+            log.info(f'Window {self.id} automatic disabled')
             
     def get_configuration(self, index):
-    return f'window_{index},{self.id},\n'
+        return f'window_{index},{self.id},\n'
 
 def register_new_window(backend, room_id):
     params = {'token': room_id}
@@ -54,5 +61,7 @@ def register_new_window(backend, room_id):
         body = resp.json()
         if body is not None:
             id = int(body.get('id', 0))
+            log.info(f'New window with id: {id} registerd.')
             return Window(id, room_id, backend)
+    log.error('Register new window failed.')
     return None
