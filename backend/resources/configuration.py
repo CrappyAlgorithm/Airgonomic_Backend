@@ -4,7 +4,7 @@ from flask import (Blueprint, Response, request)
 from backend.util.response_code import *
 from backend.util.db import get_db
 from backend.util.arg_parser import parse
-from backend.util.security import check_admin
+from backend.util.security import check_admin, get_room
 
 bp = Blueprint('configuration', __name__, url_prefix='/configuration')
 
@@ -25,6 +25,14 @@ def configuration():
         automatic_enable = parse(data.get('automatic_enable', None), 0, min=0, max=1)
         set_configuration(db, co2, humidity, automatic_enable)
         return Response('', status=OK)
+
+@bp.route('/control',methods=['GET'])
+def configuration_control():
+    db = get_db()
+    get_room(request.args.get('token', None))
+
+    if request.method == 'GET':
+        return Response(generate_view(db), status=OK, mimetype='application/json')
 
 def generate_view(db):
     cursor = db.cursor()

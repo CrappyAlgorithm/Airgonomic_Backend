@@ -31,7 +31,7 @@ def generate_view(db, user_id):
         room['room_id'] = cur[0]
         room['alias'] = cur[1]
         room['allowed'] = cur[2]
-        room['automati_enable'] = cur[3]
+        room['automatic_enable'] = cur[3]
         room['co2'] = cur[4]
         room['humidity'] = cur[5]
         room['is_open'] = cur[6]
