@@ -1,8 +1,10 @@
 import csv
 from room import Room, register_new_room
 from window import Window, register_new_window
+import requests
 
-filename = 'control/config.txt'
+filename = 'config.txt'
+target = ''
 
 def parse_file(columns):
     conf = {}
@@ -27,9 +29,11 @@ def load_configuration():
     room = conf.get('room', None)
     window_count = conf.get('window_count', None)
     duration = conf.get('duration', None)
+    sleep_duration = conf.get('sleep_duration', None)
     if backend is None:
         # start failed
         pass
+    target = backend[0]
     if window_count is None:
         #missing window count
         pass
@@ -38,6 +42,10 @@ def load_configuration():
         # missing duration
         pass
     duration = int(duration[0])
+    if sleep_duration is None:
+        # missing sleep_duration
+        pass
+    sleep_duration = int(sleep_duration[0])
     if room is None:
         room = register_new_room(backend[0], duration)
         for i in range(1,window_count+1):
@@ -57,14 +65,14 @@ def load_configuration():
                 window = Window(window[0], room_id, backend[0])
                 room.add_window(window)
         
-    return room
-    
+    return sleep_duration, room
 
-room = load_configuration()
-print(room)
-room.get_update()
-print(room)
-room.set_update()
-print(room)
-room.get_update()
-print(room)
+def get_threshold(room_id):
+    ret = {}
+    params = {'token': room_id}    
+    resp = requests.get(f'{target}/configuration/control', params=params)
+    body = resp.json()
+    if body is None:
+        # error 
+        pass
+    return body

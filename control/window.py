@@ -7,7 +7,7 @@ class Window:
         self.id = id
         self.room_id = room_id
         self.backend = f'{backend}/window/control'
-        self.automatic = 0
+        self.automatic = 1
         self.open = 0
 
     def __str__(self):
@@ -31,6 +31,19 @@ class Window:
         window['is_open'] = self.open
         requests.put(self.backend, params=params, json=window)
 
+    def change_state(self, to_state):
+        if to_state == self.open:
+            print('State already set.')
+            return
+        if self.automatic == 1:
+            self.open = 1 if self.open == 0 else 0
+            if self.open == 1:
+                print(f'Window{self.id} will be opened.')
+            else:
+                print(f'Window{self.id} will be closed.')
+        else:
+            print(f'Window{self.id} automatic disabled')
+            
 def register_new_window(backend, room_id):
     params = {'token': room_id}
     resp = requests.post(f'{backend}/window/control', params=params)
