@@ -36,7 +36,6 @@ def add_user(db, username, password):
         'SELECT id FROM user WHERE username = ?', (username,)
     )
     user_id = cursor.fetchone()[0] 
-    print(user_id)
     for room in cursor.execute('SELECT id FROM room'):
         db.execute(
             'INSERT INTO assignment (alias, user_id, allowed, room_id) VALUES ("",?,0,?)',
