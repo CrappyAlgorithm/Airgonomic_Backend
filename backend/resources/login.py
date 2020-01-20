@@ -6,10 +6,10 @@ from backend.util.db import get_db
 
 bp = Blueprint('login', __name__, url_prefix='/login')
 
-@bp.route('',methods=['GET'])
+@bp.route('',methods=['POST'])
 def login():
     db = get_db()
-    if request.method == 'GET':
+    if request.method == 'POST':
         data = request.get_json()
         if not data:
             return Response('No valid json was send.', status=BAD_REQUEST)
