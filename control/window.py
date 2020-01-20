@@ -44,6 +44,9 @@ class Window:
         else:
             print(f'Window{self.id} automatic disabled')
             
+    def get_configuration(self, index):
+    return f'window_{index},{self.id},\n'
+
 def register_new_window(backend, room_id):
     params = {'token': room_id}
     resp = requests.post(f'{backend}/window/control', params=params)

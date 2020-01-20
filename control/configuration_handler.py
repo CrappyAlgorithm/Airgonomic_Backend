@@ -1,5 +1,5 @@
 import csv
-from room import Room, register_new_room
+from room import Room, register_new_room, get_configuration
 from window import Window, register_new_window
 import requests
 
@@ -9,7 +9,7 @@ target = ''
 def parse_file(columns):
     conf = {}
     try:
-        with open(filename) as csv_file:
+        with open(filename, "r") as csv_file:
             file = csv.reader(csv_file, delimiter=',')
             for row in file:
                 val = []
@@ -24,11 +24,9 @@ def parse_file(columns):
 
 def load_configuration():
     conf = parse_file(3)
-    print(conf)
     backend = conf.get('backend', None)
     room = conf.get('room', None)
     window_count = conf.get('window_count', None)
-    duration = conf.get('duration', None)
     sleep_duration = conf.get('sleep_duration', None)
     if backend is None:
         # start failed
@@ -38,10 +36,6 @@ def load_configuration():
         #missing window count
         pass
     window_count = int(window_count[0])
-    if duration is None:
-        # missing duration
-        pass
-    duration = int(duration[0])
     if sleep_duration is None:
         # missing sleep_duration
         pass
@@ -67,12 +61,7 @@ def load_configuration():
         
     return sleep_duration, room
 
-def get_threshold(room_id):
-    ret = {}
-    params = {'token': room_id}    
-    resp = requests.get(f'{target}/configuration/control', params=params)
-    body = resp.json()
-    if body is None:
-        # error 
-        pass
-    return body
+def save_configuration(sleep_duration, room):
+    with open(filename, "w") as file:
+        file.write(f'sleep_duration,{sleep_duration},')
+        file.write(room.get_configuration)

@@ -1,7 +1,7 @@
 
 import requests
 import json
-from window import Window
+from window import Window, get_configuration
 from sensors.read_t6613_co2 import read_co2
 
 class Room:
@@ -124,17 +124,6 @@ class Room:
             print('Automatic disabled and no force change.')
         """
 
-    def start_timer(self):
-        self.start_time = now() 
-
-    def change_required(self):
-        if start_time is None:
-            return False
-        if start_time + duration < now():
-            start_time = None
-            return True
-        return False
-
     def get_threshold(self):
         ret = {}
         params = {'token': self.id}    
@@ -144,6 +133,11 @@ class Room:
             # error 
             pass
         return body
+
+    def get_configuration(self):
+        ret = ''
+        ret += f'backend,{self.backend_raw},\n'
+        ret += f'room,{self.id},'
 
 def register_new_room(backend, duration):
     resp = requests.post(f'{backend}/room/control')
