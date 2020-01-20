@@ -64,7 +64,11 @@ def load_configuration():
     return sleep_duration, room
 
 def save_configuration(sleep_duration, room):
+    if sleep_duration is None or room is None:
+        log.error('Configuration cannot be saved')
+        return
     with open(filename, "w") as file:
-        file.write(f'sleep_duration,{sleep_duration},')
-        file.write(room.get_configuration)
+        file.write(f'sleep_duration,{sleep_duration},\n')
+        file.write(f'window_count,{room.get_window_count()},\n')
+        file.write(room.get_configuration())
 

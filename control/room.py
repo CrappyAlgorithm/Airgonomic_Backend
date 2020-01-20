@@ -117,19 +117,22 @@ class Room:
         ret = f'backend,{self.backend_raw},\n'
         ret += f'room,{self.id},\n'
         id = 1
-        for window in windows:
+        for window in self.windows:
             ret += window.get_configuration(id)
             id += 1
         return ret
 
-def register_new_room(backend, duration):
+    def get_window_count(self):
+        return len(self.windows)
+
+def register_new_room(backend):
     resp = requests.post(f'{backend}/room/control')
     if resp.status_code == 201:
         body = resp.json()
         if body is not None:
             id = int(body.get('token', 0))
             log.info(f'New room with id: {id} registerd.')
-            return Room(id, backend, duration)
+            return Room(id, backend)
     log.error('Register new room failed.')
     return None
 
