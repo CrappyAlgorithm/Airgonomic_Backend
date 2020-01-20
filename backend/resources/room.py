@@ -98,7 +98,7 @@ def generate_view(db, room_id):
         (room_id,)
     ).fetchone()
     ret['id'] = cur[0]
-    ret['automati_enable'] = cur[1]
+    ret['automatic_enable'] = cur[1]
     ret['co2'] = cur[2]
     ret['humidity'] = cur[3]
     ret['is_open'] = cur[4]
