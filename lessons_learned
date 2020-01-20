@@ -3,5 +3,7 @@
 - REST Spezifikation in dem Projekt auf der Arbeit fehlerhaft.
 - Einige Umsetzungen in unserer Spezifikation waren unzureichend oder fehlerhaft.
 - Noch viel zu lernen was Datenstrukturen und Design Pattern betrifft.
-- Es ist schwer zu entscheiden welche Funtionen man bei Zeitmangel priorisiert.
-  Vermutlich wäre dafür eine Priorisierung in der Spezifikation hilfreich gewesen.
+- Es ist schwer zu entscheiden welche Funtionen man bei Zeitmangel priorisiert,
+  vermutlich wäre dafür eine Priorisierung in der Spezifikation hilfreich gewesen.
+- Flask ermöglicht einen leichten Einstieg in REST-Apis.
+- Python kann die Entwicklungszeit stark reduzieren, solange man die genutzten Module kennt.
