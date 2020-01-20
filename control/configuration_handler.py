@@ -1,10 +1,8 @@
 import csv
 from room import Room, register_new_room, get_configuration
 from window import Window, register_new_window
-import requests
 
 filename = 'config.txt'
-target = ''
 
 def parse_file(columns):
     conf = {}
@@ -45,10 +43,9 @@ def load_configuration():
         for i in range(1,window_count+1):
             window = register_new_window(backend[0], room.get_id())
             room.add_window(window)
-            
     else:
         room_id = room[0]
-        room = Room(int(room[0]), backend[0], int(duration))
+        room = Room(int(room[0]), backend[0])
         for i in range(1,window_count+1):
             window = conf.get(f'window_{str(i)}', None)
             if window is None:
@@ -57,8 +54,7 @@ def load_configuration():
                 pass
             else:
                 window = Window(window[0], room_id, backend[0])
-                room.add_window(window)
-        
+                room.add_window(window)  
     return sleep_duration, room
 
 def save_configuration(sleep_duration, room):

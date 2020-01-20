@@ -6,7 +6,7 @@ from sensors.read_t6613_co2 import read_co2
 
 class Room:
 
-    def __init__(self, id, backend, duration=5):
+    def __init__(self, id, backend):
         self.id = id
         self.backend_raw = backend
         self.backend = f'{backend}/room/control'
