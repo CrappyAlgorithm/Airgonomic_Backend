@@ -3,7 +3,7 @@
 # Einrichtung der Entwicklungsumgebung in VSCode:
 - Projekt clonen
 - Projektordner in der Konsole öffnen
-- install virtualenv
+- Falls nicht vorhanden virtualenv installieren
 - Linux: 
 ```sh
 $ python3 -m venv venv
@@ -50,3 +50,10 @@ Befehl | Beschreibung
 run | startet das Backend
 init-db | legt die Datenbank an bzw bereinigt diese
 sample-db | fügt Beispieldaten in die Datenbank ein
+
+# Startparameter für run
+Parameter | Beschreibung
+--- | ---
+-h <host-ip :text> | Angabe der Socket-IP. Mögliche externe IP's können mit ifconfig eingesehen werden.
+-p <port :integer> | Angabe des Socket-Port.
+
