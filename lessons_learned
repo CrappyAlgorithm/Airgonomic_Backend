@@ -7,3 +7,4 @@
   vermutlich wäre dafür eine Priorisierung in der Spezifikation hilfreich gewesen.
 - Flask ermöglicht einen leichten Einstieg in REST-Apis.
 - Python kann die Entwicklungszeit stark reduzieren, solange man die genutzten Module kennt.
+- Die Ansteuerung der Sensoren und Leds gestaltete sich auf dem Raspberry sehr einfach. 
