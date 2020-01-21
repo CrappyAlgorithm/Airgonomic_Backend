@@ -1,3 +1,6 @@
+## @package backend.resources.information
+#  Handles the information ressources.
+#  See rest api documentation for further information.
 import functools
 import json
 from flask import (Blueprint, Response, request)
@@ -7,6 +10,7 @@ from backend.util.security import get_user
 
 bp = Blueprint('information', __name__, url_prefix='/information')
 
+## Handles the ressource <base>/information with GET.
 @bp.route('',methods=['GET'])
 def information():
     db = get_db()
@@ -14,6 +18,10 @@ def information():
         user_id = get_user(request.args.get('token', None))
         return Response(generate_view(db, user_id), status=OK, mimetype='application/json')
 
+## Generate the JSON response map based on the user id.
+#  @param db the database
+#  @param user_id the user id
+#  @return the result map
 def generate_view(db, user_id):
     cursor = db.cursor()
     cursor_w = db.cursor()

@@ -1,3 +1,6 @@
+## @package backend.resources.configuration
+#  Handles the configuration ressources.
+#  See rest api documentation for further information.
 import functools
 import json
 from flask import (Blueprint, Response, request)
@@ -8,6 +11,7 @@ from backend.util.security import check_admin, get_room
 
 bp = Blueprint('configuration', __name__, url_prefix='/configuration')
 
+## Handles the ressource <base>/configuration with GET and PUT.
 @bp.route('',methods=['GET', 'PUT'])
 def configuration():
     db = get_db()
@@ -26,6 +30,7 @@ def configuration():
         set_configuration(db, co2, humidity, automatic_enable)
         return Response('', status=OK)
 
+## Handles the ressource <base>/configuration/control with GET.
 @bp.route('/control',methods=['GET'])
 def configuration_control():
     db = get_db()
@@ -34,6 +39,9 @@ def configuration_control():
     if request.method == 'GET':
         return Response(generate_view(db), status=OK, mimetype='application/json')
 
+## Generate the JSON response map.
+#  @param db the database
+#  @return the result map
 def generate_view(db):
     cursor = db.cursor()
     ret = {}
@@ -45,6 +53,11 @@ def generate_view(db):
         ret['automatic_enable'] = cur[2]
     return json.dumps(ret)
 
+## Set the configuration values in the database
+#  @param db the database
+#  @param co2 the co2 value as integer
+#  @param humidity the humidity value as float
+#  @param automatic_enable the automatic value: 0=off, 1=on
 def set_configuration(db, co2, humidity, automatic_enable):
     if co2 is not None:
         db.execute(

@@ -1,3 +1,6 @@
+## @package backend.resources.login
+#  Handles the login ressources.
+#  See rest api documentation for further information.
 import functools
 import json
 from flask import (Blueprint, Response, request)
@@ -6,6 +9,9 @@ from backend.util.db import get_db
 
 bp = Blueprint('login', __name__, url_prefix='/login')
 
+## Handles the ressource <base>/login with POST.
+#  Should be GET but the request api of the android application has a bug
+#  and sends all GET with body as POST!
 @bp.route('',methods=['POST'])
 def login():
     db = get_db()

@@ -1,3 +1,6 @@
+## @package backend.resources.room
+#  Handles the room ressources.
+#  See rest api documentation for further information.
 import functools
 import json
 from flask import (Blueprint, Response, request)
@@ -8,6 +11,7 @@ from backend.util.security import check_user_room, get_user, get_room
 
 bp = Blueprint('room', __name__, url_prefix='/room')
 
+## Handles the ressource <base>/room with PUT.
 @bp.route('',methods=['PUT'])
 def room():
     db = get_db()
@@ -32,6 +36,7 @@ def room():
         set_values(db, room_id, user_id, alias, is_open, automatic_enable)
         return Response('', status=OK)
 
+## Handles the ressource <base>/room/control with GET, PUT and POST.
 @bp.route('/control',methods=['GET', 'PUT', 'POST'])
 def room_control():
     db = get_db()
@@ -54,6 +59,15 @@ def room_control():
     if request.method == 'POST':
         return Response(create_room(db), status=CREATED, mimetype='application/json')
 
+## Set the room values in the database
+#  @param db the database
+#  @param room_id the room id
+#  @param user_id the user id
+#  @param alias the room alias for the user
+#  @param is_open the room state: 0=close, 1=open
+#  @param automatic_enable the automatic value: 0=off, 1=on
+#  @param co2 the co2 value as integer
+#  @param humidity the humidity value as float
 def set_values(db, room_id, user_id=None, alias=None, is_open=None, automatic_enable=None, co2=None, humidity=None):
     if alias is not None and user_id is not None:
         db.execute(
@@ -88,6 +102,10 @@ def set_values(db, room_id, user_id=None, alias=None, is_open=None, automatic_en
         )
     db.commit()
 
+## Generate the JSON response map.
+#  @param db the database
+#  @param room_id the room id
+#  @return the result map
 def generate_view(db, room_id):
     cursor = db.cursor()
     ret = {}
@@ -104,6 +122,9 @@ def generate_view(db, room_id):
     ret['is_open'] = cur[4]
     return json.dumps(ret)
 
+## Creates a new room.
+#  @param db the database
+#  @return the id of the created room as integer
 def create_room(db):
     cursor = db.cursor()
     db.execute(

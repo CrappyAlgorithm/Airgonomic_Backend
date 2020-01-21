@@ -1,3 +1,6 @@
+## @package backend.resources.window
+#  Handles the window ressources.
+#  See rest api documentation for further information.
 import functools
 import json
 from flask import (Blueprint, Response, request)
@@ -8,6 +11,7 @@ from backend.util.security import check_user_window, get_user, get_room
 
 bp = Blueprint('window', __name__, url_prefix='/window')
 
+## Handles the ressource <base>/window with PUT.
 @bp.route('',methods=['PUT'])
 def window():
     db = get_db()
@@ -32,6 +36,7 @@ def window():
         set_values(db, window_id, user_id, alias, is_open, automatic_enable)
         return Response('', status=OK)
 
+## Handles the ressource <base>/window/control with GET, PUT and POST.
 @bp.route('/control',methods=['GET', 'PUT', 'POST'])
 def window_control():
     db = get_db()
@@ -62,6 +67,10 @@ def window_control():
     if request.method == 'POST':
         return Response(create_window(db, room_id), status=CREATED, mimetype='application/json')
 
+## Generate the JSON response map.
+#  @param db the database
+#  @param window_id the window id
+#  @return the result map
 def generate_view(db, window_id):
     cursor = db.cursor()
     ret = {}
@@ -76,6 +85,13 @@ def generate_view(db, window_id):
     ret['is_open'] = cur[2]
     return json.dumps(ret)
 
+## Set the window values in the database
+#  @param db the database
+#  @param window_id the window id
+#  @param user_id the user id
+#  @param alias the window alias for the user
+#  @param is_open the window state: 0=close, 1=open
+#  @param automatic_enable the automatic value: 0=off, 1=on
 def set_values(db, window_id, user_id=None, alias=None, is_open=None, automatic_enable=None):
     if alias is not None and user_id is not None:
         db.execute(
@@ -98,6 +114,10 @@ def set_values(db, window_id, user_id=None, alias=None, is_open=None, automatic_
         )
     db.commit()
 
+## Creates a new window.
+#  @param db the database
+#  @param room_id the room id which should contain the window
+#  @return the id of the created window as integer
 def create_window(db, room_id):
     cursor = db.cursor()
     db.execute(

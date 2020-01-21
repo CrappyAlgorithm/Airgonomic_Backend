@@ -1,3 +1,6 @@
+## @package backend.resources.user
+#  Handles the user ressources.
+#  See rest api documentation for further information.
 import functools
 import json
 from flask import (Blueprint, Response, request)
@@ -8,6 +11,7 @@ from backend.util.security import check_admin
 
 bp = Blueprint('user', __name__, url_prefix='/user')
 
+## Handles the ressource <base>/user with GET and PUT.
 @bp.route('',methods=['GET', 'PUT'])
 def user():
     db = get_db()
@@ -31,6 +35,9 @@ def user():
         set_values(db, user_id, is_admin, allow_room, revoke_room)
         return Response('', status=OK)
 
+## Generate the JSON response map.
+#  @param db the database
+#  @return the result map
 def generate_view(db):
     cursor = db.cursor()
     cursor_r = db.cursor()
@@ -60,6 +67,12 @@ def generate_view(db):
         ret['user'].append(user)
     return json.dumps(ret)
 
+## Set the user values in the database
+#  @param db the database
+#  @param user_id the user id
+#  @param is_admin defines the user rights: 0=no_admin, 1=admin
+#  @param allow_room id of the room the user should get rights
+#  @param revoke_room id of the room the user should lose rights
 def set_values(db, user_id, is_admin, allow_room, revoke_room):
     if is_admin is not None:
         db.execute(

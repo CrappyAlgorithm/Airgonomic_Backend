@@ -1,3 +1,5 @@
+## @package backend.util.response_code
+#  Offers constants for the http status codes used in the backend.
 
 OK = 200
 CREATED = 201

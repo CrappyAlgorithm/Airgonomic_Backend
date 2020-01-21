@@ -1,3 +1,6 @@
+## @package backend.resources.register
+#  Handles the register ressources.
+#  See rest api documentation for further information.
 import functools
 from flask import (Blueprint, Response, request)
 from backend.util.response_code import *
@@ -5,6 +8,7 @@ from backend.util.db import get_db
 
 bp = Blueprint('register', __name__, url_prefix='/register')
 
+## Handles the ressource <base>/register with POST.
 @bp.route('',methods=['POST'])
 def register():
     db = get_db()
@@ -26,6 +30,10 @@ def register():
         add_user(db, username, password)
         return Response('', status=CREATED)
 
+## Creates a new user with given name and password.
+#  @param db the database
+#  @param username the name of the user
+#  @param password the password of the user
 def add_user(db, username, password):
     cursor = db.cursor()
     db.execute(
