@@ -1,4 +1,4 @@
-## @package control
+## @package control.__init__
 #  Handles the start, close and runtime of the window control.
 from time import sleep
 import logging as log
