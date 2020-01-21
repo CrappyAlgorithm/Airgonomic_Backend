@@ -125,6 +125,12 @@ class Room:
     def get_window_count(self):
         return len(self.windows)
 
+    def close_all():
+        self.open = 0
+        for window in self.windows:
+            window.change_state(0)
+        self.set_update()
+
 def register_new_room(backend):
     resp = requests.post(f'{backend}/room/control')
     if resp.status_code == 201:

@@ -10,6 +10,7 @@ sleep_duration, room = load_configuration()
 def close(signum, frame):
     log.info('Programm will be terminated.')
     save_configuration(sleep_duration, room)
+    room.close_all()
     exit(0)
 
 signal.signal(signal.SIGINT, close)
