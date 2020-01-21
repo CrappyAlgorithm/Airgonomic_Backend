@@ -1,14 +1,16 @@
 import requests
 import json
 import logging as log
+from led_handler import open_window, close_window
 
 class Window:
 
-    def __init__(self, id, room_id, backend):
+    def __init__(self, id, room_id, backend, gpio):
         self.id = id
         self.room_id = room_id
         self.backend = f'{backend}/window/control'
-        self.automatic = 1
+        self.gpio = gpio
+        self.automatic = 0
         self.open = 0
 
     def __str__(self):
@@ -46,15 +48,17 @@ class Window:
             self.open = 1 if self.open == 0 else 0
             if self.open == 1:
                 log.info(f'Window {self.id} will be opened.')
+                open_window(self.gpio)
             else:
                 log.info(f'Window {self.id} will be closed.')
+                close_window(self.gpio)
         else:
             log.info(f'Window {self.id} automatic disabled')
             
     def get_configuration(self, index):
-        return f'window_{index},{self.id},\n'
+        return f'window_{index},{self.id},{self.gpio}\n'
 
-def register_new_window(backend, room_id):
+def register_new_window(backend, room_id, gpio):
     params = {'token': room_id}
     resp = requests.post(f'{backend}/window/control', params=params)
     if resp.status_code == 201:
@@ -62,6 +66,6 @@ def register_new_window(backend, room_id):
         if body is not None:
             id = int(body.get('id', 0))
             log.info(f'New window with id: {id} registerd.')
-            return Window(id, room_id, backend)
+            return Window(id, room_id, backend, gpio)
     log.error('Register new window failed.')
     return None

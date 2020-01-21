@@ -48,6 +48,10 @@ def load_configuration():
         log.info('Parameter "room" not found in configuration file. A new room will be created.')
         room = register_new_room(backend[0])
         for i in range(1,window_count+1):
+            window_gpio = int(conf.get(f'window_{i}')[1])
+            if gpio is None:
+                log.error(f'No gpio for window_{i} found in configuration file')
+                sys.exit(1)
             window = register_new_window(backend[0], room.get_id())
             room.add_window(window)
     else:
@@ -59,7 +63,7 @@ def load_configuration():
                 log.error(f'Parameter "window_{i}" not found in configuration file.')
                 sys.exit(1)
             else:
-                window = Window(window[0], room_id, backend[0])
+                window = Window(window[0], room_id, backend[0], int(window[1]))
                 room.add_window(window)  
     return sleep_duration, room
 

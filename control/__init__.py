@@ -6,7 +6,7 @@ from room import Room
 
 log.basicConfig(filename='control.log', format='%(asctime)s-(%(process)d)-"Window-Control"-%(levelname)s: %(message)s', level=log.INFO)
 sleep_duration, room = load_configuration()
-
+print('check')
 def close(signum, frame):
     log.info('Programm will be terminated.')
     save_configuration(sleep_duration, room)

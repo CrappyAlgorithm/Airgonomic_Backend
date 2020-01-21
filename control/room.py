@@ -126,7 +126,7 @@ class Room:
     def get_window_count(self):
         return len(self.windows)
 
-    def close_all():
+    def close_all(self):
         self.open = 0
         for window in self.windows:
             window.change_state(0)
