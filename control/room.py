@@ -90,11 +90,8 @@ class Room:
                     log.info('Humidity is over threshold')
                     change = True
             elif self.open == 1:
-                if self.co2 < int(threshold['co2']):
-                    log.info('Co2 is under threshold')
-                    change = True
-                if self.humidity < int(threshold['humidity']):
-                    log.info('Humidity is under threshold')
+                if self.co2 < int(threshold['co2']) and self.humidity < int(threshold['humidity']):
+                    log.info('Both values are under threshold.')
                     change = True
             if change:
                 self.open = 1 if self.open == 0 else 0
