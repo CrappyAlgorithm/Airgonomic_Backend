@@ -4,6 +4,7 @@ import json
 import logging as log
 from window import Window
 from sensors.read_t6613_co2 import read_co2
+from sensors.read_bme280_hum import read_humidity
 
 class Room:
 
@@ -47,6 +48,10 @@ class Room:
             if new_co2 is not None:
                 self.co2 = new_co2
                 log.info(f'New co2 value for room {self.id} is: {self.co2}ppm')
+            new_humidity = read_humidity()
+            if new_humidity is not None:
+                self.humidity = new_humidity
+                log.info(f'New humidity value for room {self.id} is: {self.humidity}%')
         else:
             log.info(f'Update of room {self.id} not possible.')
 
@@ -81,20 +86,16 @@ class Room:
                 if self.co2 > int(threshold['co2']):
                     log.info('Co2 is over threshold')
                     change = True
-                """
                 if self.humidity > int(threshold['humidity']):
                     log.info('Humidity is over threshold')
                     change = True
-                """
             elif self.open == 1:
                 if self.co2 < int(threshold['co2']):
                     log.info('Co2 is under threshold')
                     change = True
-                """
                 if self.humidity < int(threshold['humidity']):
                     log.info('Humidity is under threshold')
                     change = True
-                """
             if change:
                 self.open = 1 if self.open == 0 else 0
                 for window in self.windows:
