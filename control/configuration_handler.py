@@ -1,11 +1,19 @@
+## @package control.configuration_handler
+#  Handles the load and safe of configurations from file.
 import csv
 from room import Room, register_new_room
 from window import Window, register_new_window
 import logging as log
 import sys
 
+## The filename of the configuration file.
 filename = 'config.txt'
 
+## Read the configuration as a map with lists from file.
+#
+#  The seperator ist defined to ",".
+#  @param columns the number of columns to read in each row.
+#  @return a dictionary with a list of parsed values
 def parse_file(columns):
     conf = {}
     try:
@@ -24,6 +32,19 @@ def parse_file(columns):
         return None
     return conf
 
+## Parse the configuration and create rooms and windows based on it.
+#
+#  The values backend, window_count, sleep_duration and the window gpios
+#  in form of window_i,,[gpio] need to be definded in the configuration file.
+#  In case room is not given, a new room with given windows will be created.
+#  Sample structure of the configuration file:
+#  backend,<ip:port>:int,None
+#  sleep_duration,<duration>:int,None
+#  window_count,<count>:int,None
+#  room,<id in the backend>:int,None
+#  window_i,<is in the backend>:int,<gpio>:int
+#
+#  @return the parsed Room with the parsed Windows
 def load_configuration():
     conf = parse_file(3)
     if conf is None:
@@ -67,6 +88,9 @@ def load_configuration():
                 room.add_window(window)  
     return sleep_duration, room
 
+## Saves the configuration into configuration file.
+#  @param sleep_duration the defined duration
+#  @param room the room of type Room to get the configuration from
 def save_configuration(sleep_duration, room):
     if sleep_duration is None or room is None:
         log.error('Configuration cannot be saved')

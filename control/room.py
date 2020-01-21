@@ -1,4 +1,5 @@
-
+## @package control.room
+#  Handles the class Room and a funtion to register new rooms.
 import requests
 import json
 import logging as log
@@ -6,8 +7,15 @@ from window import Window
 from sensors.read_t6613_co2 import read_co2
 from sensors.read_bme280_hum import read_humidity
 
+## Handles the functionality of a room.
+#  This include getting and setting updates and check the air values.
 class Room:
 
+    ## Standart constructor to initiate a room with default values.
+    #  Please call get_update after creating a room.
+    #  @param self the object pointer
+    #  @param id the room id in the backend
+    #  @param backend the ip and port of the used backend
     def __init__(self, id, backend):
         self.id = id
         self.backend_raw = backend
@@ -20,6 +28,9 @@ class Room:
         self.windows = []
         self.override = False
 
+    ## Get the room as string representation.
+    #  @param self the object pointer
+    #  @return the room as string
     def __str__(self):
         s = f'Room: {self.id}\n'
         s += f'Backend: {self.backend}\n'
@@ -31,9 +42,14 @@ class Room:
             s += str(window)
         return s
 
+    ## Get the room id.
+    #  @param self the object pointer
+    #  @return the id of the room
     def get_id(self):
         return self.id
 
+    ## Updates the room with the data from the given backend.
+    #  @param self the object pointer.
     def get_update(self):
         log.info(f'Get update for room {self.id}')
         params = {'token': self.id,}
@@ -55,6 +71,8 @@ class Room:
         else:
             log.info(f'Update of room {self.id} not possible.')
 
+    ## Pushes the room values to the given backend.
+    #  @param self the object pointer
     def set_update(self):
         log.info(f'Set update for room {self.id}')
         params = {'token': self.id}
@@ -69,6 +87,10 @@ class Room:
     def add_window(self, window):
         self.windows.append(window)
 
+    ## Checks the air values and decide to open the windows or not.
+    #  In case one value is over threshold it calls open for all windows.
+    #  It contains an override, which lasts till the user change it.
+    #  @param self the object pointer
     def check_status(self):
         threshold = self.get_threshold()
         if self.force != self.open:
@@ -102,6 +124,9 @@ class Room:
         else:
             log.info('Automatic is disabled')
 
+    ## Get the threshold from the given backend.
+    #  @param self the object pointer.
+    #  @return a dictionary with the received values.
     def get_threshold(self):
         ret = {}
         params = {'token': self.id}    
@@ -111,6 +136,9 @@ class Room:
             log.error(f'Cannot get threshold')
         return body
 
+    ## Get the configuration of the room and its windows.
+    #  @param self the object pointer
+    #  @return the configuration as string
     def get_configuration(self):
         ret = f'backend,{self.backend_raw},\n'
         ret += f'room,{self.id},\n'
@@ -120,15 +148,23 @@ class Room:
             id += 1
         return ret
 
+    ## Get the count of containing windows.
+    #  @param self the object pointer
+    #  @return the window count as integer
     def get_window_count(self):
         return len(self.windows)
 
+    ## Closes all containing windows.
+    #  @param self the object pointer
     def close_all(self):
         self.open = 0
         for window in self.windows:
             window.change_state(0)
         self.set_update()
 
+## Registers a new room at the given backend.
+#  @param backend the ip and port of the target backend as string
+#  @return the created Room object or None in case of error
 def register_new_room(backend):
     resp = requests.post(f'{backend}/room/control')
     if resp.status_code == 201:

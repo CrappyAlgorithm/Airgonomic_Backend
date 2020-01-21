@@ -1,7 +1,11 @@
+## @package control.sensors.read_t6613_co2
+#  Handles the functionality to read the t6613 sensor
 from time import sleep
 import serial
 import struct
 
+## Reads the co2 value of the t6613.
+#  @return the co2 value as integer
 def read_co2():
     ser = serial.Serial(
         port='/dev/ttyUSB0',
