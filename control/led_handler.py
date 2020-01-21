@@ -1,6 +1,7 @@
 import RPi.GPIO as GPIO
 
 GPIO.setmode(GPIO.BCM)
+GPIO.setwarnings(False)
 
 def open_window(gpio):
     GPIO.setup(gpio, GPIO.OUT)
