@@ -46,13 +46,13 @@ def add_user(db, username, password):
     user_id = cursor.fetchone()[0] 
     for room in cursor.execute('SELECT id FROM room'):
         db.execute(
-            'INSERT INTO assignment (alias, user_id, allowed, room_id) VALUES ("",?,0,?)',
-            (user_id, room[0])
+            'INSERT INTO assignment (alias, user_id, allowed, room_id) VALUES (?,?,0,?)',
+            (f'Raum {room[0]}', user_id, room[0])
         )
     for window in cursor.execute('SELECT id FROM window'):
         db.execute(
-            'INSERT INTO assignment (alias, user_id, allowed, window_id) VALUES ("",?,0,?)',
-            (user_id, window[0])
+            'INSERT INTO assignment (alias, user_id, allowed, window_id) VALUES (?,?,0,?)',
+            (f'Fenster {window[0]}', user_id, window[0])
         )
     db.commit()
 

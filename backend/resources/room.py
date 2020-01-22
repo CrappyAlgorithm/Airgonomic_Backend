@@ -137,8 +137,8 @@ def create_room(db):
 
     for user in cursor.execute('SELECT id FROM user'):
         db.execute(
-            'INSERT INTO assignment (alias, user_id, allowed, room_id) VALUES ("",?,0,?)',
-            (user[0], id)
+            'INSERT INTO assignment (alias, user_id, allowed, room_id) VALUES (?,?,0,?)',
+            (f'Raum {id}', user[0], id)
         )
 
     ret = {}

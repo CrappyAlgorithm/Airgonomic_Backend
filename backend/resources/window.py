@@ -133,8 +133,8 @@ def create_window(db, room_id):
 
     for user in cursor.execute('SELECT id FROM user'):
         db.execute(
-            'INSERT INTO assignment (alias, user_id, allowed, window_id) VALUES ("",?,0,?)',
-            (user[0], id)
+            'INSERT INTO assignment (alias, user_id, allowed, window_id) VALUES (?,?,0,?)',
+            (f'Fenster {id}', user[0], id)
         )
 
     ret = {}

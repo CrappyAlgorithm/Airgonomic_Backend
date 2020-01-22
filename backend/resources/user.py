@@ -22,12 +22,13 @@ def user():
 
     if request.method == 'PUT':
         data = request.get_json()
+        print(f'JSON: {data}')
         if not data:
             return Response('No valid json was send.', status=BAD_REQUEST)
         user_id = parse(data.get('id', None), 0)
         is_admin = parse(data.get('is_admin', None), 0, min=0, max=1)
-        allow_room = parse(data.get('allow_room', None), 0, min=0, max=1)
-        revoke_room = parse(data.get('revoke_room', None), 0, min=0, max=1)
+        allow_room = parse(data.get('allow_room', None), 0, min=1)
+        revoke_room = parse(data.get('revoke_room', None), 0, min=1)
         if db.execute(
             'SELECT id FROM user WHERE id = ?', (user_id,)
         ).fetchone() is None:
