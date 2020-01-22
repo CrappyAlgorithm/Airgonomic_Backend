@@ -45,3 +45,9 @@ CREATE TABLE assignment (
     FOREIGN KEY (room_id) REFERENCES room (id),
     FOREIGN KEY (window_id) REFERENCES window (id)
 );
+
+INSERT INTO configuration (co2, humidity, automatic_enable)
+VALUES (1000, 60.0, 0);
+
+INSERT INTO user (username, password, is_admin)
+VALUES ("admin", "admin", 1);
