@@ -1,4 +1,5 @@
 ## @package backend.resources.login
+#  @author Sebastian Steinmeyer
 #  Handles the login ressources.
 #  See rest api documentation for further information.
 import functools

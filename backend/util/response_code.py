@@ -1,4 +1,5 @@
 ## @package backend.util.response_code
+#  @author Sebastian Steinmeyer
 #  Offers constants for the http status codes used in the backend.
 
 OK = 200

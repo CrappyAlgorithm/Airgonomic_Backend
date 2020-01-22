@@ -1,4 +1,5 @@
 ## @package control.led_handler
+#  @author Sebastian Steinmeyer
 #  Handles the functionallity to turn a led on and off. 
 import RPi.GPIO as GPIO
 

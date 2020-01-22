@@ -1,4 +1,5 @@
 ## @package backend.util.arg_parser
+#  @author Sebastian Steinmeyer
 #  Offers the functinallity to simple parse integer and float within defined range.
 from typing import TypeVar
 from flask import abort

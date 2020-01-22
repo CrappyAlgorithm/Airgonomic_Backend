@@ -1,4 +1,5 @@
 ## @package control.sensors.read_bme280_hum
+#  @author Sebastian Steinmeyer
 #  Handles the functionality to read the bme280 sensor
 import bme280
 import smbus2

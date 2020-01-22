@@ -1,4 +1,5 @@
 ## @package control.sensors.read_t6613_co2
+#  @author Sebastian Steinmeyer
 #  Handles the functionality to read the t6613 sensor
 from time import sleep
 import serial

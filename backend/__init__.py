@@ -1,4 +1,5 @@
 ## @package backend.util.__init__
+#  @author Sebastian Steinmeyer
 #  The application factory of the backend
 import os
 from flask import Flask, abort

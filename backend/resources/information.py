@@ -1,4 +1,5 @@
 ## @package backend.resources.information
+#  @author Sebastian Steinmeyer
 #  Handles the information ressources.
 #  See rest api documentation for further information.
 import functools

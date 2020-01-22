@@ -1,4 +1,5 @@
 ## @package backend.resources.user
+#  @author Sebastian Steinmeyer
 #  Handles the user ressources.
 #  See rest api documentation for further information.
 import functools
@@ -22,7 +23,6 @@ def user():
 
     if request.method == 'PUT':
         data = request.get_json()
-        print(f'JSON: {data}')
         if not data:
             return Response('No valid json was send.', status=BAD_REQUEST)
         user_id = parse(data.get('id', None), 0)

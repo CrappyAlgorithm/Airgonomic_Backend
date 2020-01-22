@@ -1,4 +1,5 @@
 ## @package backend.util.security
+#  @author Sebastian Steinmeyer
 #  Handles the checks for user rights and getting room/user by security token.
 #  At the moment the token is simply the id of the user/room.
 from flask import abort

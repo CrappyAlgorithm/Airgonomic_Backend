@@ -1,4 +1,5 @@
 ## @package control.window
+#  @author Sebastian Steinmeyer
 #  Handles the class Window and a funtion to register new windows.
 import requests
 import json
@@ -79,6 +80,7 @@ class Window:
 
     ## Get the configuration of the window.
     #  @param self the object pointer
+    #  @param index the window index related to the room
     #  @return the configuration as string       
     def get_configuration(self, index):
         return f'window_{index},{self.id},{self.gpio}\n'

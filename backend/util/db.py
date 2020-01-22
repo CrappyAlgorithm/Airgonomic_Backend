@@ -1,4 +1,5 @@
 ## @package backend.util.db
+#  @author Sebastian Steinmeyer
 #  Handles the functionality for the database access
 import sqlite3
 import click

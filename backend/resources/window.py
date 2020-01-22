@@ -1,4 +1,5 @@
 ## @package backend.resources.window
+#  @author Sebastian Steinmeyer
 #  Handles the window ressources.
 #  See rest api documentation for further information.
 import functools

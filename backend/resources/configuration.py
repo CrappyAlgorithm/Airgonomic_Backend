@@ -1,4 +1,5 @@
 ## @package backend.resources.configuration
+#  @author Sebastian Steinmeyer
 #  Handles the configuration ressources.
 #  See rest api documentation for further information.
 import functools

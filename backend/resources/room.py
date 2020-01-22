@@ -1,4 +1,5 @@
 ## @package backend.resources.room
+#  @author Sebastian Steinmeyer
 #  Handles the room ressources.
 #  See rest api documentation for further information.
 import functools

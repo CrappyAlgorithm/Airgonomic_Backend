@@ -1,4 +1,5 @@
 ## @package control.room
+#  @author Sebastian Steinmeyer
 #  Handles the class Room and a funtion to register new rooms.
 import requests
 import json

@@ -1,4 +1,5 @@
 ## @package control.configuration_handler
+#  @author Sebastian Steinmeyer
 #  Handles the load and safe of configurations from file.
 import csv
 from room import Room, register_new_room

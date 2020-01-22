@@ -1,7 +1,6 @@
 sleep_duration,10,
 window_count,3,
 backend,http://192.168.4.1:5000,
-room,22,
 window_1,42,22
 window_2,43,23
 window_3,44,24

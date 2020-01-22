@@ -1,4 +1,5 @@
 ## @package backend.resources.register
+#  @author Sebastian Steinmeyer
 #  Handles the register ressources.
 #  See rest api documentation for further information.
 import functools
