@@ -70,10 +70,10 @@ def load_configuration():
         room = register_new_room(backend[0])
         for i in range(1,window_count+1):
             window_gpio = int(conf.get(f'window_{i}')[1])
-            if gpio is None:
+            if window_gpio is None:
                 log.error(f'No gpio for window_{i} found in configuration file')
                 sys.exit(1)
-            window = register_new_window(backend[0], room.get_id())
+            window = register_new_window(backend[0], room.get_id(), window_gpio)
             room.add_window(window)
     else:
         room_id = room[0]
